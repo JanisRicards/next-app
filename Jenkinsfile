@@ -25,14 +25,14 @@ pipeline {
                 }
             }
         }
-        stage('ESLint') {
-            steps {
-                sh 'npm run lint'
-            }
-        }
         stage('Jest test') {
             steps {
                 sh 'npm run test'
+            }
+        }
+        stage('ESLint') {
+            steps {
+                sh 'npm run lint'
             }
         }
         stage('Build and push to ECR') {
