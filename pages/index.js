@@ -62,7 +62,7 @@ export default function Home() {
         </a>
       </footer>
 
-      <style jsx>{`
+      <style>{`
         main {
           padding: 5rem 0;
           flex: 1;
@@ -99,7 +99,7 @@ export default function Home() {
         }
       `}</style>
 
-      <style jsx global>{`
+      <style>{`
         html,
         body {
           padding: 0;
