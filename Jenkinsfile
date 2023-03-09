@@ -11,9 +11,9 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh "npm run build"
-                    sh "npm run test"
-                    sh "npm run lint"
+                    sh "sudo npm run build"
+                    sh "sudo npm run test"
+                    sh "sudo npm run lint"
                     sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                 }
             }
@@ -32,9 +32,9 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh "npm run build"
-                    sh "npm run test"
-                    sh "npm run lint"
+                    sh "sudo npm run build"
+                    sh "sudo npm run test"
+                    sh "sudo npm run lint"
                     sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                     withCredentials([aws(credentialsId: 'aws-credentials', regionVariable: 'AWS_REGION')]) {
                         sh "aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $DOCKER_REGISTRY"
