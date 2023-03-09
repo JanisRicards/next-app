@@ -11,6 +11,9 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
+                    sh "npm run build"
+                    sh "npm run test"
+                    sh "npm run lint"
                     sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                 }
             }
@@ -18,7 +21,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarScanner'
+                    def scannerHome = tool 'SonarScanner';
                     withSonarQubeEnv() {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
@@ -29,6 +32,9 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
+                    sh "npm run build"
+                    sh "npm run test"
+                    sh "npm run lint"
                     sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                     withCredentials([aws(credentialsId: 'aws-credentials', regionVariable: 'AWS_REGION')]) {
                         sh "aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $DOCKER_REGISTRY"
