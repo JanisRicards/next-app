@@ -1,5 +1,4 @@
-const React = require('react');
-const { describe, it, expect } = require('@jest/globals');
+import { describe, it, expect } from '@jest/globals';
 
 describe("Very simple Test", () => {
   it("should pass", () => {
