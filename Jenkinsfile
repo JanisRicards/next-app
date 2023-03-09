@@ -1,29 +1,34 @@
 pipeline {
     environment {
-        DOCKER_REGISTRY = "971693106226.dkr.ecr.eu-central-1.amazonaws.com/jenkins-ecr"
-        DOCKER_REPO = "jenkins-ecr"
-        DOCKER_TAG = "latest"
-        AWS_REGION = "eu-central-1"
+        DOCKER_REGISTRY = "${env.DOCKER_REGISTRY_URL}"
+        DOCKER_REPO = "${env.ECR_REPO}"
+        DOCKER_TAG = "${build_number}"
+        AWS_REGION = "${env.AWS_REG}"
     }
     agent any
     stages {
         stage('Build') {
             steps {
                 git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                sh 'docker build -t $DOCKER_REPO:$DOCKER_TAG .'
+                sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
             }
         }
-        stage('Push to ECR') {
+
+
+        stage('Build and push to ECR') {
             steps {
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                ]]) {
-                    sh "aws ecr get-login-password --region ${env.AWS_REGION} | docker login --username AWS --password-stdin ${env.DOCKER_REGISTRY}"
-                    sh "docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
-                    sh "docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
+                sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
+                withCredentials([aws(credentialsId: 'aws-credentials', regionVariable: 'AWS_REGION')]) {
+                    sh "aws ecr get-login-password --region $AWS_REGION |sudo docker login --username AWS --password-stdin $DOCKER_REGISTRY"
+                    sh "sudo docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                    sh "sudo docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
                 }
+            }
+        }
+        stage('Cleanup workspace') {
+            steps {
+                cleanWs()
             }
         }
     }
