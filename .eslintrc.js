@@ -19,8 +19,3 @@ module.exports = {
     "rules": {
     }
 }
-
-
-
-
-
