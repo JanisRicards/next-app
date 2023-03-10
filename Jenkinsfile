@@ -10,8 +10,8 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarScanner'
-                    withSonarQubeEnv() {
+                    def scannerHome = tool('SonarScanner')
+                    withSonarQubeEnv {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
@@ -35,6 +35,15 @@ pipeline {
                 sh 'npm run lint'
             }
         }
+        
+        stage('Quality gate check') {
+            steps {
+                timeout(time: 30, unit: 'MINUTES') {
+                    waitforQualityGate abortPipeline: true
+                }
+            }
+        }
+        
         stage('Build and push to ECR') {
             steps {
                 script {
@@ -48,6 +57,7 @@ pipeline {
                 }
             }
         }
+        
         stage('Cleanup workspace') {
             steps {
                 script {
