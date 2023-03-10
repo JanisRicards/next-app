@@ -17,6 +17,13 @@ pipeline {
                 }
             }
         }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+                sh 'npm install -g npm@9.6.1'
+                sh ' npm install --save-dev chai'
+            }
+        }
         stage('Build') {
             steps {
                 script {
