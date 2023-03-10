@@ -4,6 +4,7 @@ pipeline {
         DOCKER_REPO = "${env.ECR_REPO}"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         AWS_REGION = "${env.AWS_REG}"
+        SONAR_TOKEN = credentials('SonarQube')
     }
     agent any
     stages {
@@ -42,15 +43,18 @@ pipeline {
                 sh 'npm run lint'
             }
         }
-        
         stage('Quality gate check') {
             steps {
-                timeout(time: 30, unit: 'MINUTES') {
-                    waitforQualityGate abortPipeline: true
+                script {
+                    timeout(time: 30, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
                 }
             }
         }
-        
         stage('Build and push to ECR') {
             steps {
                 script {
@@ -64,7 +68,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Cleanup workspace') {
             steps {
                 script {
