@@ -25,7 +25,7 @@ pipeline {
                 }
             }
         }
-        stage('Jest test') {
+        stage('Testing test') {
             steps {
                 sh 'npm run test'
             }
