@@ -4,7 +4,7 @@ pipeline {
         DOCKER_REPO = "${env.ECR_REPO}"
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         AWS_REGION = "${env.AWS_REG}"
-        SONAR_TOKEN = credentials('SonarQube')
+        SONAR_TOKEN = credentials('SonarQubeV2')
     }
     agent any
     stages {
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
+                    sh " docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                 }
             }
         }
