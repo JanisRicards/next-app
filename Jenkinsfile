@@ -20,25 +20,25 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh ' npm install'
+                sh 'sudo npm install'
             }
         }
         stage('Build') {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh " docker build -t $DOCKER_REPO:$DOCKER_TAG ."
+                    sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                 }
             }
         }
         stage('Testing test') {
             steps {
-                sh 'npm run test'
+                sh 'sudo npm run test'
             }
         }
         stage('ESLint') {
             steps {
-                sh 'npm run lint'
+                sh 'sudo npm run lint'
             }
         }
         stage('Quality gate check') {
@@ -61,11 +61,11 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh " docker build -t $DOCKER_REPO:$DOCKER_TAG ."
+                    sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                     withCredentials([aws(credentialsId: 'aws-credentials', regionVariable: 'AWS_REGION')]) {
-                        sh "aws ecr get-login-password --region $AWS_REGION |  docker login --username AWS --password-stdin $DOCKER_REGISTRY"
-                        sh " docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
-                        sh " docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                        sh "aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $DOCKER_REGISTRY"
+                        sh "sudo docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                        sh "sudo docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
                     }
                 }
             }
