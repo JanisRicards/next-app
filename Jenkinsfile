@@ -11,7 +11,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool('SonarScanner')
+                    def scannerHome = tool('sq1')
                     withSonarQubeEnv {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
@@ -46,7 +46,7 @@ pipeline {
                 script {
                     withSonarQubeEnv('SonarQube') {
                         sleep(60)
-                        timeout(time: 1, unit: 'MINUTES') {
+                        timeout(time: 5, unit: 'MINUTES') {
                             def qg = waitForQualityGate()
                             print "Finished waiting"
                             if (qg.status != 'OK') {
