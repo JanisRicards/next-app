@@ -45,7 +45,6 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('sq1') {
-                        sleep(60)
                         timeout(time: 5, unit: 'MINUTES') {
                             def qg = waitForQualityGate()
                             print "Finished waiting"
