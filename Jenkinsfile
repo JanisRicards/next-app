@@ -11,7 +11,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool('SonarScanner')
+                    def scannerHome = tool('SonarScanners')
                     withSonarQubeEnv {
                         sh "${scannerHome}/bin/sonar-scanner"
                     }
@@ -20,9 +20,7 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'sudo npm install'
-                sh 'sudo npm install -g npm@9.6.1'
-                sh 'sudo npm install --save-dev chai'
+                sh ' npm install'
             }
         }
         stage('Build') {
@@ -63,11 +61,11 @@ pipeline {
             steps {
                 script {
                     git branch: 'main', url: 'https://github.com/JanisRicards/next-app.git'
-                    sh "sudo docker build -t $DOCKER_REPO:$DOCKER_TAG ."
+                    sh " docker build -t $DOCKER_REPO:$DOCKER_TAG ."
                     withCredentials([aws(credentialsId: 'aws-credentials', regionVariable: 'AWS_REGION')]) {
-                        sh "aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $DOCKER_REGISTRY"
-                        sh "sudo docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
-                        sh "sudo docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                        sh "aws ecr get-login-password --region $AWS_REGION |  docker login --username AWS --password-stdin $DOCKER_REGISTRY"
+                        sh " docker tag $DOCKER_REPO:$DOCKER_TAG $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
+                        sh " docker push $DOCKER_REGISTRY/$DOCKER_REPO:$DOCKER_TAG"
                     }
                 }
             }
